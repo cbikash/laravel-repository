@@ -87,7 +87,7 @@ class CreateRepository extends Command
                 namespace App\Http\Repositories;
                 
                 use App\Models\\{$modelName};
-                use Cbikash\\LaravelRepository\\Repository;
+                use Vxsoft\\LaravelRepository\\Repository;
                 use Illuminate\Support\Collection;
                 
                 /**
