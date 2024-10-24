@@ -27,13 +27,22 @@ use Illuminate\Support\Facades\DB;
  */
 class EntityRepository implements EntityManagerInterface
 {
-    // The Eloquent model this repository interacts with
+    /**
+     * @var Model|mixed 
+     * The Eloquent model this repository interacts with
+     */
     public Model $model;
 
-    // The database connection for executing queries
+    /**
+     * @var Connection 
+     * The database connection for executing queries
+     */
     private Connection $connection;
 
-    // A list of entities that need to be persisted (saved) later
+    /**
+     * @var array 
+     * A list of entities that need to be persisted (saved) later
+     */
     private array $entitiesToPersist = [];
 
     /**
@@ -55,9 +64,6 @@ class EntityRepository implements EntityManagerInterface
      * Get the repository for a specific entity (model).
      *
      * @param string $entityClass - The fully qualified class name of the entity (model).
-     * @param string|null $baseNamespace - Optional base namespace for the repository.
-     *
-     * @return \App\Http\Repositories\EntityRepository - The corresponding repository instance.
      *
      * @throws \Exception - If the repository class does not exist.
      *
@@ -67,11 +73,14 @@ class EntityRepository implements EntityManagerInterface
      *
      * @inheritDoc
      */
-    public function getRepository(string $entityClass, string | null $baseNamespace = null): mixed
+    public function getRepository(string $entityClass): mixed
     {
-        // Determine the repository class name
-        $baseNamespace = $baseNamespace ? rtrim($baseNamespace, '\\') . '\\' : 'App\\Http\\Repositories\\';
-        $repositoryClass = $baseNamespace . class_basename($entityClass) . "Repository";
+        $rootNamespace = config('repository.generator.rootNamespace');
+        $repositoriesPath = config('repository.generator.paths.repositories');
+
+        // Construct the fully qualified repository class name
+        $repositoryNamespace = $rootNamespace . str_replace([DIRECTORY_SEPARATOR], '\\', $repositoriesPath);
+        $repositoryClass = $repositoryNamespace ."\\". class_basename($entityClass) . "Repository";
 
         // Ensure the repository class exists
         if (!class_exists($repositoryClass)) {

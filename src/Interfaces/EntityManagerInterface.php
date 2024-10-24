@@ -21,9 +21,8 @@ interface EntityManagerInterface
 {
     /**
      * @param string $entityClass
-     * @param string|null $baseNamespace
      */
-    public function getRepository(string $entityClass, null|string $baseNamespace = null): mixed;
+    public function getRepository(string $entityClass): mixed;
 
     /**
      * @param array $criteria

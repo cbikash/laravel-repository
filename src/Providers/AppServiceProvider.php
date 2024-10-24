@@ -23,6 +23,16 @@ class AppServiceProvider extends ServiceProvider
                 CreateRepository::class,
             ]);
         }
+
+        // Publish config file
+        $this->publishes([
+            __DIR__.'/../config/repository.php' => config_path('repository.php'),
+        ], 'repository-config');
+
+        // Merge the config file for package defaults
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/repository.php', 'repository'
+        );
     }
 
 }

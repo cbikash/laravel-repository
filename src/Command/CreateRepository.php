@@ -39,19 +39,30 @@ class CreateRepository extends Command
     {
         // Retrieve the name of the model from the command argument
         $modelName = $this->argument('name');
-        $modelClass = "App\\Models\\{$modelName}";
 
-        // Check if the model class exists
+        // Get the base path and root namespace from the config
+        $basePath = config('repository.generator.basePath');
+        $rootNamespace = config('repository.generator.rootNamespace');
+
+        // Retrieve the paths from the config
+        $modelsPath = config('repository.generator.paths.models');
+        $repositoriesPath = config('repository.generator.paths.repositories');
+
+        // Construct the model class and check if it exists
+        $modelClass = "{$rootNamespace}".str_replace([DIRECTORY_SEPARATOR], '\\', $modelsPath)."\\{$modelName}";
+
         if (!class_exists($modelClass)) {
             $this->error("Model '{$modelClass}' does not exist.");
             return;
         }
 
-        $filePath = app_path("Http/Repositories/{$modelName}Repository.php");
-
+        // Construct the file path for the repository based on the config
+        $filePath = "{$basePath}/{$repositoriesPath}/{$modelName}Repository.php";
+        $repositoryNamespace = $rootNamespace . str_replace([DIRECTORY_SEPARATOR], '\\', $repositoriesPath);
+        
         // Ensure the Repositories directory exists
-        if (!is_dir(app_path('Http/Repositories'))) {
-            mkdir(app_path('Http/Repositories'), 0755, true);
+        if (!is_dir("{$basePath}/{$repositoriesPath}")) {
+            mkdir("{$basePath}/{$repositoriesPath}", 0755, true);
         }
 
         // Check if the repository already exists
@@ -61,7 +72,7 @@ class CreateRepository extends Command
         }
 
         // Generate the repository file content and create the file
-        $fileContent = $this->getContent($modelName);
+        $fileContent = $this->getContent($modelName,  $modelClass, $repositoryNamespace);
         file_put_contents($filePath, $fileContent);
 
         // Display success message
@@ -78,15 +89,15 @@ class CreateRepository extends Command
      * @param string $modelName The name of the model for which the repository is being created.
      * @return string The generated PHP class content for the repository.
      */
-    private function getContent(string $modelName): string
+    private function getContent(string $modelName, string $modelClass, string $repositoryNamespace): string
     {
         // Building the repository class content
         return <<<PHP
             <?php
             
-                namespace App\Http\Repositories;
+                namespace {$repositoryNamespace};
                 
-                use App\Models\\{$modelName};
+                use {$modelClass};
                 use Vxsoft\\LaravelRepository\\Repository;
                 use Illuminate\Support\Collection;
                 
