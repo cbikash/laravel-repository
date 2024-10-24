@@ -2,6 +2,7 @@
     "name": "vxsoft/laravel-repository",
     "description": "A repository package for Laravel",
     "type": "library",
+    "version": "v1.0.0",
     "license": "MIT",
     "keywords": [
         "laravel",
