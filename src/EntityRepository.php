@@ -61,6 +61,47 @@ class EntityRepository implements EntityManagerInterface
     }
 
     /**
+     * Get the current model instance.
+     *
+     * This method returns the model associated with the repository.
+     * The returned object could either be an instance of the Model class or any object that extends Model.
+     * Useful when you need to access the model for further operations in the repository.
+     *
+     * @return Model|mixed The model instance being used by the repository.
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * Get the name of the table associated with the model.
+     *
+     * This method retrieves the table name from the model instance.
+     * It assumes that the model has a method `getTable()` which returns the database table's name associated with the model.
+     * Useful when you need to dynamically reference the model's table in queries.
+     *
+     * @return string The table name associated with the current model.
+     */
+    public function getTable(){
+        return $this->model->getTable();
+    }
+
+    /**
+     * Create a new query builder instance for the current table.
+     *
+     * This method initiates a query builder for the table associated with the current model.
+     * It uses the `connection` property to access the database connection and starts a new query on the table retrieved from `getTable()`.
+     * Useful when you need to build complex queries programmatically in the repository.
+     *
+     * @return \Illuminate\Database\Query\Builder A new query builder instance for the table.
+     */
+    public function createQueryBuilder()
+    {
+        return $this->connection->table($this->getTable());
+    }
+
+    /**
      * Get the repository for a specific entity (model).
      *
      * @param string $entityClass - The fully qualified class name of the entity (model).
@@ -109,7 +150,7 @@ class EntityRepository implements EntityManagerInterface
      *
      * @return Collection|array - The filtered and sorted model instances.
      */
-    public function findBy(array $filters = [], array $orders = []): Collection|array
+    public function findBy(array $filters, array $orders = []): Collection|array
     {
         $qb = $this->model->query();
         foreach ($filters as $key => $value)

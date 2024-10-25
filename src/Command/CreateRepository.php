@@ -112,7 +112,7 @@ class CreateRepository extends Command
                  * 
                  * @method {$modelName}|null findOneBy(array \$criteria) Retrieve a single {$modelName} record based on criteria
                  * @method {$modelName}|null getById(mixed \$id) Retrieve a {$modelName} record by ID
-                 * @method Collection|{$modelName}[]|null findBy(array \$filters = [], array \$orders = []) Retrieve records based on filters and ordering
+                 * @method Collection|{$modelName}[]|null findBy(array \$filters, array \$orders = []) Retrieve records based on filters and ordering
                  * @method {$modelName} create(array \$data) Create a new {$modelName} record
                  * @method {$modelName} update(mixed \$id, array \$data) Update an existing {$modelName} record by ID
                  * @method void delete(mixed \$id) Delete a {$modelName} record by ID
