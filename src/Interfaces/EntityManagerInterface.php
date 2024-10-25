@@ -20,14 +20,59 @@ use Illuminate\Database\Eloquent\Model;
 interface EntityManagerInterface
 {
     /**
-     * @param string $entityClass
+     * Get the repository for a specific entity (model).
+     *
+     * @param string $entityClass - The fully qualified class name of the entity (model).
+     *
+     * @throws \Exception - If the repository class does not exist.
+     *
+     * <code>
+     *     $object = $this->entityManager->getRepository(Model::class)->find($id)
+     * </code>
+     *
+     * @inheritDoc
      */
     public function getRepository(string $entityClass): mixed;
 
     /**
-     * @param array $criteria
-     * @return Model|array|Builder|null Find One result according to given criteria
-     * Find One result according to given criteria
+     * Get the current model instance.
+     *
+     * This method returns the model associated with the repository.
+     * The returned object could either be an instance of the Model class or any object that extends Model.
+     * Useful when you need to access the model for further operations in the repository.
+     *
+     * @return Model|mixed The model instance being used by the repository.
+     */
+    public function getModel();
+
+    /**
+     * Get the name of the table associated with the model.
+     *
+     * This method retrieves the table name from the model instance.
+     * It assumes that the model has a method `getTable()` which returns the database table's name associated with the model.
+     * Useful when you need to dynamically reference the model's table in queries.
+     *
+     * @return string The table name associated with the current model.
+     */
+    public function getTable();
+
+    /**
+     * Create a new query builder instance for the current table.
+     *
+     * This method initiates a query builder for the table associated with the current model.
+     * It uses the `connection` property to access the database connection and starts a new query on the table retrieved from `getTable()`.
+     * Useful when you need to build complex queries programmatically in the repository.
+     *
+     * @return \Illuminate\Database\Query\Builder A new query builder instance for the table.
+     */
+    public function createQueryBuilder();
+
+    /**
+     * Find a single record that matches the provided criteria.
+     *
+     * @param array $criteria - Filters to apply to the query.
+     *
+     * @return Model|Builder|null - The found model instance or null if not found.
      */
     public function findOneBy(array $criteria): Model|array|Builder|null;
 
@@ -44,7 +89,7 @@ interface EntityManagerInterface
      *
      * Return values according to filter or criteria, it also accepts orders parameter and return order according to it
      */
-    public function findBy(array $filters = [], array $orders = []): mixed;
+    public function findBy(array $filters, array $orders = []): mixed;
 
     /**
      * @param $id
