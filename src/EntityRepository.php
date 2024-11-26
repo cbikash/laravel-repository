@@ -46,6 +46,12 @@ class EntityRepository implements EntityManagerInterface
     private array $entitiesToPersist = [];
 
     /**
+     * @var Builder|\Illuminate\Database\Query\Builder
+     * Provide query bilder associted with table
+     */
+    protected Builder $_qb;
+
+    /**
      * Constructor to initialize the repository with an optional model and connection.
      *
      * @param string|null $entityClass - The Eloquent model class this repository will manage.
@@ -53,11 +59,12 @@ class EntityRepository implements EntityManagerInterface
      */
     public function __construct($entityClass = null, null|string $name = null)
     {
+        $this->connection = DB::connection($name);
+
         if($entityClass) {
             $this->model = new $entityClass();
+            $this->_qb = $this->connection->table($this->model->getTable());
         }
-
-        $this->connection = DB::connection($name);
     }
 
     /**
