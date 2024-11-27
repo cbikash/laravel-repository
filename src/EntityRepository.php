@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection as IlluminateCollection;
 
 /**
  * EntityRepository Class
@@ -49,7 +50,7 @@ class EntityRepository implements EntityManagerInterface
      * @var Builder|\Illuminate\Database\Query\Builder
      * Provide query bilder associted with table
      */
-    protected Builder $_qb;
+    protected Builder|\Illuminate\Database\Query\Builder  $_qb;
 
     /**
      * Constructor to initialize the repository with an optional model and connection.
@@ -142,11 +143,11 @@ class EntityRepository implements EntityManagerInterface
     /**
      * Find and return all records for the associated model.
      *
-     * @return Collection|array - The collection of model instances.
+     * - The collection of model instances.
      */
-    public function findAll(): Collection|array
+    public function findAll(): IlluminateCollection
     {
-        return $this->model->query()->get();
+        return $this->createQueryBuilder()->get();
     }
 
     /**
@@ -155,18 +156,25 @@ class EntityRepository implements EntityManagerInterface
      * @param array $filters - Filters to apply to the query.
      * @param array $orders - Sorting options for the query.
      *
-     * @return Collection|array - The filtered and sorted model instances.
+     * @return IlluminateCollection|array - The filtered and sorted model instances.
      */
-    public function findBy(array $filters, array $orders = []): Collection|array
+    public function findBy(array $filters, array $orders = []): IlluminateCollection|array
     {
-        $qb = $this->model->query();
-        foreach ($filters as $key => $value)
-        {
+        $qb = $this->_qb;
+        foreach ($filters as $key => $value){
             is_array($value) ? $qb->whereIn($key, $value) : $qb->where($key, $value);
         }
 
-        if (count($orders)) $qb->orderBy($orders[0], $orders[1]);
-
+        if(!empty($orders)) {
+            foreach ($orders as $key => $value){
+                if(is_int($key)){
+                    $qb->orderBy($value, 'ASC');
+                }else{
+                    $qb->orderBy($key, $value);
+                }
+            }
+        }
+        
         return $qb->get();
     }
 
@@ -232,11 +240,11 @@ class EntityRepository implements EntityManagerInterface
      *
      * @param array $criteria - Filters to apply to the query.
      *
-     * @return Model|Builder|null - The found model instance or null if not found.
+     *@return mixed  - The found model instance or null if not found.
      */
-    public function findOneBy(array $criteria): Model|Builder|null
+    public function findOneBy(array $criteria): mixed
     {
-        $qb = $this->model->query();
+        $qb = $this->_qb;
         foreach ($criteria as $key => $value)
         {
             $qb->where($key, $value);

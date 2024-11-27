@@ -110,12 +110,13 @@ class CreateRepository extends Command
                  *
                  * @extends Repository<{$modelName}>
                  * 
-                 * @method {$modelName}|null findOneBy(array \$criteria) Retrieve a single {$modelName} record based on criteria
+                 * @method mixed|null findOneBy(array \$criteria) Retrieve a single {$modelName} record based on criteria
                  * @method {$modelName}|null getById(mixed \$id) Retrieve a {$modelName} record by ID
-                 * @method Collection|{$modelName}[]|null findBy(array \$filters, array \$orders = []) Retrieve records based on filters and ordering
+                 * @method Collection|array|null findBy(array \$filters, array \$orders = []) Retrieve records based on filters and ordering
+                 * @method Collection findAll() Fetch all record of a {$modelName}
                  * @method {$modelName} create(array \$data) Create a new {$modelName} record
                  * @method {$modelName} update(mixed \$id, array \$data) Update an existing {$modelName} record by ID
-                 * @method void delete(mixed \$id) Delete a {$modelName} record by ID
+                 * @method void delete(mixed \$id) Delete a {$modelName} record by ID\
                  */
                 class {$modelName}Repository extends Repository
                 {
