@@ -2,7 +2,7 @@
     "name": "vxsoft/laravel-repository",
     "description": "Laravel Repository is a powerful Laravel package designed to simplify the interaction with Eloquent models by implementing a repository-based architecture. It separates the data persistence logic from the application's business logic, promoting a clean, maintainable, and testable codebase.",
     "type": "library",
-    "version": "v1.0.3",
+    "version": "v1.0.4",
     "license": "MIT",
     "keywords": [
         "laravel",
@@ -24,6 +24,6 @@
         "php": "^7.4|^8.0",
         "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^10.0||^11.0"
+        "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0"
     }
 }
