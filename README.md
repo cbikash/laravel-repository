@@ -1,7 +1,7 @@
 # Laravel Repository Package
 
-**Author**: Bikas Chaudhary <vcbikas123@gmail.com>  
-**Version**: 1.0.3
+**Author**: Bikas Chaudhary <vcbikash123@gmail.com>  
+**Version**: 1.0.4
 
 ## Overview
 
@@ -75,13 +75,30 @@ class UserRepository extends Repository
 }
 ```
 
-## Adding Custom Logic
-For instance, let's add custom logic to filter users by status:
+## Adding Custom Logic Using Eloquent
+For instance, let's add custom logic to filter users by status using ``Eloquent``:
 
 ```php
 public function getUserList(array $filters = []): mixed
 {
     $qb = $this->model->select('*');
+
+    if (!empty($filters['status'])) {
+        $qb->where('status', $filters['status']);
+    }
+
+    return $qb;
+}
+```
+
+## Adding Custom Logic Using Query Builder
+For instance, let's add custom logic to filter users by status using ``Query Builder``:
+
+```php
+public function getUserList(array $filters = []): mixed
+{
+    $qb = $this->_qb->select('*');
+    //OR $qb = $this->createQueryBuilder()->select('*');
 
     if (!empty($filters['status'])) {
         $qb->where('status', $filters['status']);
@@ -115,7 +132,7 @@ public function index(Request $request)
     ]);
 }
 ```
-## Using EntityManager Interface
+## Using Entity Manager Interface
 Alternatively, you can access the repository via EntityManagerInterface:
 ```php 
 public function __construct(private readonly EntityManagerInterface $entityManager)
@@ -178,26 +195,28 @@ Here are some of the key functions available within your repositories:
   */
  public function createQueryBuilder();
 
-/**
- * Find a single record based on criteria.
- * @param array $criteria
- * @return Model|array|Builder|null
- */
-public function findOneBy(array $criteria): Model|array|Builder|null;
+ /**
+  * Find a single record that matches the provided criteria.
+  *
+  * @param array $criteria - Filters to apply to the query.
+  *
+  * @return mixed - The found model instance or null if not found.
+  */
+ public function findOneBy(array $criteria): mixed;
+
+ /**
+  * @return IlluminateCollection Return all values
+  */
+ public function findAll(): IlluminateCollection;
 
 /**
- * Return all records.
- * @return mixed|Collection|null
- */
-public function findAll(): mixed;
-
-/**
- * Return records based on filters and ordering.
- * @param array $filters
- * @param array $orders
- * @return mixed
- */
-public function findBy(array $filters, array $orders = []): mixed;
+* @param array $filters
+* @param array $orders
+* @return IlluminateCollection|array
+*
+* Return values according to filter or criteria, it also accepts orders parameter and return order according to it
+*/
+public function findBy(array $filters, array $orders = []): IlluminateCollection|array;
 
 /**
  * Retrieve a record by its ID.
@@ -279,6 +298,6 @@ public function rollback(): void;
 ```
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT License](./LICENSE)
 
 
