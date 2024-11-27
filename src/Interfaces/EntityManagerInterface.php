@@ -5,6 +5,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as IlluminateCollection;
 
 /**
  * Interface EntityManagerInterface
@@ -72,24 +73,23 @@ interface EntityManagerInterface
      *
      * @param array $criteria - Filters to apply to the query.
      *
-     * @return Model|Builder|null - The found model instance or null if not found.
+     * @return mixed - The found model instance or null if not found.
      */
-    public function findOneBy(array $criteria): Model|array|Builder|null;
+    public function findOneBy(array $criteria): mixed;
 
     /**
-     * @return mixed | Collection | null
-     * Return all values
+     * @return IlluminateCollection Return all values
      */
-    public function findAll(): mixed;
+    public function findAll(): IlluminateCollection;
 
     /**
      * @param array $filters
      * @param array $orders
-     * @return mixed
+     * @return IlluminateCollection|array
      *
      * Return values according to filter or criteria, it also accepts orders parameter and return order according to it
      */
-    public function findBy(array $filters, array $orders = []): mixed;
+    public function findBy(array $filters, array $orders = []): IlluminateCollection|array;
 
     /**
      * @param $id
